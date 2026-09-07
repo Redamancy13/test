@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>祝福胡文静</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0c0c1d 0%, #1a0a2e 50%, #2d1b4e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    overflow: hidden;
+  }
+  canvas { position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none; }
+  .container {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2rem;
+  }
+  .name {
+    font-size: 2.8rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #ff6ec4, #ffd86f, #ff6ec4);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s linear infinite;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: shimmer 3s linear infinite, fadeUp 1s 0.5s forwards;
+  }
+  .blessing {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .blessing span {
+    display: inline-block;
+    font-size: 1.8rem;
+    color: #fff;
+    opacity: 0;
+    transform: translateY(30px) scale(0.5);
+    animation: popIn 0.6s forwards;
+  }
+  .line2 {
+    margin-top: 1rem;
+  }
+  .line2 span {
+    color: #ffd86f;
+  }
+  .stars {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .star {
+    position: absolute;
+    width: 3px; height: 3px;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle 2s infinite alternate;
+  }
+  .heart-float {
+    position: fixed;
+    font-size: 1.5rem;
+    animation: floatUp 4s forwards;
+    z-index: 0;
+    pointer-events: none;
+  }
+  @keyframes shimmer {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popIn {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes twinkle {
+    0% { opacity: 0.2; }
+    100% { opacity: 1; }
+  }
+  @keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-100vh) scale(0.5); }
+  }
+  @keyframes burst {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(1); opacity: 0; }
+  }
+  .firework {
+    position: fixed;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    animation: burst 1s forwards;
+  }
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<canvas id="canvas"></canvas>
+<div class="container">
+  <div class="name" id="name">✨ 胡文静 ✨</div>
+  <div class="blessing" id="line1"></div>
+  <div class="blessing line2" id="line2"></div>
+</div>
+
+<script>
+const line1 = "开心快乐";
+const line2 = "每天开单";
+const el1 = document.getElementById("line1");
+const el2 = document.getElementById("line2");
+
+line1.split("").forEach((ch, i) => {
+  const span = document.createElement("span");
+  span.textContent = ch;
+  span.style.animationDelay = `${1 + i * 0.2}s`;
+  el1.appendChild(span);
+});
+
+line2.split("").forEach((ch, i) => {
+  const span = document.createElement("span");
+  span.textContent = ch;
+  span.style.animationDelay = `${2 + i * 0.2}s`;
+  el2.appendChild(span);
+});
+
+const starsEl = document.getElementById("stars");
+for (let i = 0; i < 80; i++) {
+  const star = document.createElement("div");
+  star.className = "star";
+  star.style.left = Math.random() * 100 + "%";
+  star.style.top = Math.random() * 100 + "%";
+  star.style.animationDelay = Math.random() * 2 + "s";
+  star.style.width = star.style.height = (Math.random() * 3 + 1) + "px";
+  starsEl.appendChild(star);
+}
+
+const hearts = ["❤️", "💛", "💖", "🌟", "🎉", "💰", "📋", "🎊"];
+function spawnHeart() {
+  const h = document.createElement("div");
+  h.className = "heart-float";
+  h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+  h.style.left = Math.random() * 100 + "%";
+  h.style.bottom = "-30px";
+  h.style.animationDuration = (3 + Math.random() * 3) + "s";
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 6000);
+}
+setInterval(spawnHeart, 500);
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+const particles = [];
+const colors = ["#ff6ec4", "#ffd86f", "#7b68ee", "#00e5ff", "#ff5252", "#69f0ae"];
+
+function createFirework(x, y) {
+  const color = colors[Math.floor(Math.random() * colors.length)];
+  for (let i = 0; i < 40; i++) {
+    const angle = (Math.PI * 2 / 40) * i;
+    const speed = 2 + Math.random() * 3;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 1,
+      color,
+      size: 2 + Math.random() * 2
+    });
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.05;
+    p.life -= 0.015;
+    if (p.life <= 0) { particles.splice(i, 1); continue; }
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(animate);
+}
+animate();
+
+function autoFirework() {
+  createFirework(
+    Math.random() * canvas.width,
+    Math.random() * canvas.height * 0.6
+  );
+  setTimeout(autoFirework, 800 + Math.random() * 1200);
+}
+autoFirework();
+</script>
+</body>
+</html>
